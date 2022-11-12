@@ -25,11 +25,7 @@ stdenv.mkDerivation rec {
     rm $out/share/nRF5_SDK/*.msi
     runHook postInstall
   '';
-
-  shellHook = ''
-    export NRF5_SDK_ROOT=$out/share/nRF5_SDK
-  '';
-
+  
   meta = with lib; {
     description = "Nordic Semiconductor nRF5 Software Development Kit";
     platforms = platforms.all;
