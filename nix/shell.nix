@@ -17,6 +17,6 @@ pkgs.mkShell {
     ]
     ++ darwinPackages;
     shellHook = ''
-        export SDK_ROOT=${nrf5-sdk.outPath}
+        export SDK_ROOT=${nrf5-sdk.outPath}/share/nRF5_SDK
     '';
 }
