@@ -31,7 +31,7 @@
                 cmake
                 ninja
                 nrf5-sdk
-                gcc-arm-embedded
+                gcc-arm-embedded-6
 
               ] ++ darwinPackages;
             shellHook = ''
