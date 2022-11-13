@@ -14,6 +14,7 @@
         pkgs-unstable = import nixpkgs-unstable {
           inherit system;
           config.allowUnfree = true;
+          config.segger-jlink.acceptLicense = true;
         };
         darwinPackages = if pkgs.stdenv.isDarwin then [
           pkgs.darwin.apple_sdk.frameworks.CoreServices
