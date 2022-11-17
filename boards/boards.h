@@ -43,6 +43,8 @@
   #include "beacon_big.h"
 #elif defined(BOARD_BEACON_SMALL)
   #include "beacon_round.h"
+#elif defined(BOARD_MS71SF2)
+  #include "MS71SF2.h"
 #else
 #error "Board is not defined"
 

@@ -1,4 +1,4 @@
-TARGETS          := nrf51822_xxac
+TARGETS          := nrf51822_xxab
 OUTPUT_DIRECTORY := _build
 
 BLE_ROOT := ../../../../..
@@ -11,13 +11,13 @@ SOFTDEVICE_HEX = $(SDK_ROOT)/components/softdevice/s130/hex/s130_nrf51_2.0.1_sof
 
 SHELL := /bin/bash
 
-# SDK_ROOT := $(BLE_ROOT)/nRF5_SDK_12.3.0_d7731ad
+SDK_ROOT := $(SDK_ROOT)
 PROJ_DIR := .
 CUSTOM_INCLUDES_DIR = $(PROJ_DIR)
 ADB_TARGET := pixel
 ADB_DIRECTORY := /sdcard/dfu
 
-BOARD := BEACON_SMALL
+BOARD := MS71SF2
 
 BIN_OUTPUT_FOLDER = /home/daniel/Desktop/Development/AirTags/KeyGeneratorWeb/firmware/files/
 BIN_OUTPUT_WITH_CRYSTAL    = scaffold_with_crystal.bin
@@ -69,7 +69,7 @@ SRC_FILES += \
   $(SDK_ROOT)/components/libraries/crc32/crc32.c \
   $(SDK_ROOT)/components/ble/ble_services/ble_dfu/ble_dfu.c \
   $(SDK_ROOT)/components/libraries/fds/fds.c \
-  $(PROJ_DIR)/src/battery.c \
+  $(CUSTOM_INCLUDES_DIR)/src/battery.c \
   $(CUSTOM_INCLUDES_DIR)/boards/boards.c \
 
 # Include folders common to all targets
