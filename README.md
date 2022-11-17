@@ -7,4 +7,4 @@ It sends out advertisement keys defined in [keys.h](keys.h), rotating keys every
 `nix develop --extra-experimental-features nix-command --extra-experimental-features flakes`
 
 ## Flash using GDB
-`make clean && make -j8 && arm-none-eabi-gdb -nx --batch -ex 'target extended-remote 192.168.1.192:2022' -ex 'monitor swdp_scan' -ex 'attach 1' -ex 'load _build/nrf51822_xxab.hex' -ex 'compare-sections' -ex 'kill'`
+`make clean && make -j8 && arm-none-eabi-gdb -nx --batch -ex 'target extended-remote 192.168.1.192:2022' -ex 'monitor swdp_scan' -ex 'attach 1' -ex "load $SDK_ROOT/components/softdevice/s130/hex/s130_nrf51_2.0.1_softdevice.hex" -ex 'load _build/nrf51822_xxab.hex' -ex 'compare-sections' -ex 'kill'`
