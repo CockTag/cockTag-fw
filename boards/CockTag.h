@@ -9,11 +9,9 @@ extern "C" {
 
 // LEDs definitions for CockTag
 #define LEDS_NUMBER    2
-#define LEDS_ACTIVE_STATE 0
-#define LED_START      1
+#define LEDS_ACTIVE_STATE 1
 #define LED_0          1
 #define LED_1          4
-#define LED_STOP       4
 #define LEDS_LIST { LED_0, LED_1 }
 #define LEDS_INV_MASK  LEDS_MASK
 
