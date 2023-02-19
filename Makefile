@@ -101,6 +101,7 @@ INC_FOLDERS += \
   $(SDK_ROOT)/components/drivers_nrf/gpiote \
   $(SDK_ROOT)/components/libraries/fifo \
   $(SDK_ROOT)/components/drivers_nrf/common \
+  $(SDK_ROOT)/components/drivers_nrf/delay \
   $(SDK_ROOT)/components/ble/ble_advertising \
   $(SDK_ROOT)/components/drivers_nrf/adc \
   $(SDK_ROOT)/components/softdevice/s130/headers/nrf51 \

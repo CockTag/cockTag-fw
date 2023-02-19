@@ -10,6 +10,7 @@
 #include "keys.h"
 #include "battery.h"
 #include "nrf_drv_gpiote.h"
+#include "nrf_delay.h"
 
 #define CENTRAL_LINK_COUNT              0                                 /**< Number of central links used by the application. When changing this number remember to adjust the RAM settings*/
 #define PERIPHERAL_LINK_COUNT           0                                 /**< Number of peripheral links used by the application. When changing this number remember to adjust the RAM settings*/
@@ -299,11 +300,11 @@ void leds_init(){
 }
 
 void buzzer_init(){
-    NRF_LOG_DEBUG("enabling buzzer\n");
+    NRF_LOG_DEBUG("init buzzer\n");
     bsp_board_buzzer_init();
     bsp_board_buzzer_on();
-    // sleep(2);
-    // bsp_board_buzzer_off();
+    nrf_delay_ms(1000);
+    bsp_board_buzzer_off();
 }
 
 void button_handler(long unsigned int pin, nrf_gpiote_polarity_t polarity){
