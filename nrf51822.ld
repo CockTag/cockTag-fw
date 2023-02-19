@@ -6,8 +6,8 @@ GROUP(-lgcc -lc -lnosys)
 MEMORY
 {
   /* flash length is calculated using the flash origin of the bootloader_secure */
-  FLASH (rx) : ORIGIN = 0x0001b000, LENGTH = 128K - 0x0001b000
-  RAM (rwx) :  ORIGIN = 0x20001870, LENGTH = 16K - 0x00001870
+  FLASH (rx) : ORIGIN = 0x0001b000, LENGTH = 0x00035C00 - 0x0001b000
+  RAM (rwx) :  ORIGIN = 0x20001870, LENGTH = 0x2790
 }
 
 SECTIONS

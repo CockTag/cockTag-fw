@@ -40,6 +40,12 @@
 #include "boards.h"
 #include <stdint.h>
 #include <stdbool.h>
+#include "app_pwm.h"
+
+APP_PWM_INSTANCE(PWM1, 2);                   // Create the instance "PWM1" using TIMER2.
+
+static bool pwm_initialized = false;
+
 
 #if LEDS_NUMBER > 0
 static const uint8_t m_board_led_list[LEDS_NUMBER] = LEDS_LIST;
@@ -126,9 +132,27 @@ uint32_t bsp_board_pin_to_led_idx(uint32_t pin_number)
 #endif //LEDS_NUMBER > 0
 
 #ifdef BUZZER
+
+
+static void bsp_board_buzzer_duty(uint32_t dutycycle) {
+  return;
+  if (!pwm_initialized) {
+    pwm_initialized = true;
+
+    app_pwm_config_t pwm_cfg = APP_PWM_DEFAULT_CONFIG_1CH(2863L, BUZZER);
+
+    app_pwm_init(&PWM1, &pwm_cfg, NULL);
+  }
+  
+  app_pwm_enable(&PWM1);
+	
+	
+	while(app_pwm_channel_duty_set(&PWM1, 0, 50) == NRF_ERROR_BUSY);
+}
+
 void bsp_board_buzzer_on(void)
 {
-    nrf_gpio_pin_write(BUZZER, 1);
+  bsp_board_buzzer_duty(0);
 }
 
 void bsp_board_buzzer_off(void)
