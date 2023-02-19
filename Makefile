@@ -1,4 +1,6 @@
-TARGETS          := nrf51822_xxab
+# TARGETS          := nrf51822_xxab
+TARGETS          := nrf51822_xxaa
+# TARGETS          += nrf51822_xxac
 OUTPUT_DIRECTORY := _build
 
 BLE_ROOT := ../../../../..
@@ -17,7 +19,9 @@ CUSTOM_INCLUDES_DIR = $(PROJ_DIR)
 ADB_TARGET := pixel
 ADB_DIRECTORY := /sdcard/dfu
 
-BOARD := MS71SF2
+BOARD := CockTag
+
+GDB_REMOTE := 192.168.1.134:2022
 
 BIN_OUTPUT_FOLDER = /home/daniel/Desktop/Development/AirTags/KeyGeneratorWeb/firmware/files/
 BIN_OUTPUT_WITH_CRYSTAL    = scaffold_with_crystal.bin
@@ -287,12 +291,40 @@ reset:
 	nrfjprog --reset
 
 bin: 
-	rm -f without_crtystal.bin with_crtystal.bin nrf51822_xxac.bin
+	rm -f without_crtystal.bin with_crtystal.bin nrf51822_xxaa.bin
 	make clean default sign BOARD=BOARD_BEACON_BIG
-	unzip $(PROJECT_ID).zip nrf51822_xxac.bin
-	mv nrf51822_xxac.bin "$(BIN_OUTPUT_FOLDER)$(BIN_OUTPUT_WITHOUT_CRYSTAL)"
+	unzip $(PROJECT_ID).zip nrf51822_xxaa.bin
+	mv nrf51822_xxaa.bin "$(BIN_OUTPUT_FOLDER)$(BIN_OUTPUT_WITHOUT_CRYSTAL)"
 	make clean default sign  BOARD=BOARD_BEACON_SMALL
-	unzip $(PROJECT_ID).zip nrf51822_xxac.bin
-	mv nrf51822_xxac.bin "$(BIN_OUTPUT_FOLDER)$(BIN_OUTPUT_WITH_CRYSTAL)"
+	unzip $(PROJECT_ID).zip nrf51822_xxaa.bin
+	mv nrf51822_xxaa.bin "$(BIN_OUTPUT_FOLDER)$(BIN_OUTPUT_WITH_CRYSTAL)"
 	rm $(PROJECT_ID).zip
 	make clean
+
+gdbfl_app:
+	arm-none-eabi-gdb -nx --batch -ex "target extended-remote $(GDB_REMOTE)" \
+	-ex 'monitor swdp_scan' \
+	-ex 'attach 1' \
+	-ex "load $(APPLICATION_HEX)" \
+	-ex 'compare-sections' 
+
+gdbfl_softDevice:
+	arm-none-eabi-gdb -nx --batch -ex "target extended-remote $(GDB_REMOTE)" \
+	-ex 'monitor swdp_scan' \
+	-ex 'attach 1' \
+	-ex "load $(SOFTDEVICE_HEX)" \
+	-ex 'compare-sections' 
+
+.gdbupl: clean default gdbfl_app
+
+gdb:
+	arm-none-eabi-gdb \
+	-ex "set mem inaccessible-by-default off" \
+	-ex "target extended-remote $(GDB_REMOTE)" \
+	-ex "mon version" \
+	-ex "mon connect_srst enable" \
+	-ex "mon tpwr enable" \
+	-ex 'monitor jtag_scan' \
+	-ex 'monitor swdp_scan' \
+	$(APPLICATION_HEX)
+	

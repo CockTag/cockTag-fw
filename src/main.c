@@ -298,6 +298,14 @@ void leds_init(){
     bsp_board_leds_init();
 }
 
+void buzzer_init(){
+    NRF_LOG_DEBUG("enabling buzzer\n");
+    bsp_board_buzzer_init();
+    bsp_board_buzzer_on();
+    // sleep(2);
+    // bsp_board_buzzer_off();
+}
+
 void button_handler(long unsigned int pin, nrf_gpiote_polarity_t polarity){
     if(ignore_button){
         return;
@@ -353,6 +361,7 @@ int main(void)
 
     leds_init();
     buttons_init();
+    buzzer_init();
 
     timers_init();
     timers_start();

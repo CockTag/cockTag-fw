@@ -125,6 +125,23 @@ uint32_t bsp_board_pin_to_led_idx(uint32_t pin_number)
 }
 #endif //LEDS_NUMBER > 0
 
+#ifdef BUZZER
+void bsp_board_buzzer_on(void)
+{
+    nrf_gpio_pin_write(BUZZER, 1);
+}
+
+void bsp_board_buzzer_off(void)
+{
+    nrf_gpio_pin_write(BUZZER, 0);
+}
+void bsp_board_buzzer_init(void)
+{
+    nrf_gpio_cfg_output(BUZZER);
+    bsp_board_buzzer_off();
+}
+#endif // BUZZER defined
+
 #if BUTTONS_NUMBER > 0
 bool bsp_board_button_state_get(uint32_t button_idx)
 {
