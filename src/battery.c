@@ -49,7 +49,7 @@
 
 
 #define BATTERY_VOLTAGE_MIN 1800.0
-#define BATTERY_VOLTAGE_MAX 3000.0
+#define BATTERY_VOLTAGE_MAX 3300.0
 
 
 /**@brief Function for handling the Connect event.
