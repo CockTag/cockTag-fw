@@ -21,6 +21,11 @@
 
 #define BUZZER 17
 
+#define GYRO
+#define GYRO_SDA 8
+#define GYRO_SCL 9
+#define GYRO_INT 10
+
 #define HWFC true
 
 // Low frequency clock source to be used by the SoftDevice

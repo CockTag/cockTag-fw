@@ -13,6 +13,10 @@
 #include "softdevice_handler.h"
 #include "nrf_delay.h"
 
+#ifdef GYRO
+#include "gyro.h"
+#endif
+
 
 #define CENTRAL_LINK_COUNT \
   0 /**< Number of central links used by the application. When changing this number remember to adjust the RAM settings*/
@@ -64,6 +68,7 @@ uint8_t ignore_button = false;
 #ifdef BUZZER
 APP_TIMER_DEF(buzz_timer);
 #endif
+
 
 static uint8_t
     offline_finding_adv_template[] =
@@ -366,6 +371,11 @@ int main(void) {
 
 #ifdef BUZZER
   welcome();
+#endif
+
+#ifdef GYRO
+  gyro_init();
+  // gyro_read();
 #endif
 
   ble_stack_init();

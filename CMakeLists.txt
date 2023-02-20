@@ -157,6 +157,7 @@ list(APPEND NRF_SDK_INCLUDES
     ${SDK_ROOT}/components/softdevice/common/softdevice_handler
     ${SDK_ROOT}/components/ble/ble_services/ble_hrs
     ${SDK_ROOT}/components/libraries/log/src
+    ${SDK_ROOT}/components/drivers_nrf/twi_master
 )
 
 list(APPEND NRF_SDK_SOURCES
@@ -185,6 +186,7 @@ list(APPEND NRF_SDK_SOURCES
     ${SDK_ROOT}/external/segger_rtt/SEGGER_RTT_printf.c
     ${SDK_ROOT}/components/toolchain/gcc/gcc_startup_nrf51.S
     ${SDK_ROOT}/components/toolchain/system_nrf51.c
+    ${SDK_ROOT}/components/drivers_nrf/twi_master/nrf_drv_twi.c
 )
 
 message(${PROJECT_DIR})
