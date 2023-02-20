@@ -3,8 +3,39 @@ firmware for nRF51 chips that is coincidentally compatible with the FindMy (AirT
 
 It sends out advertisement keys defined in [keys.h](keys.h), rotating keys every hour.
 
-## Nix develop
-`nix develop --extra-experimental-features nix-command --extra-experimental-features flakes`
+## Setup
+```
+nix develop --extra-experimental-features nix-command --extra-experimental-features flakes
+mkdir build
+cd build
+cmake .. -GNinja
+```
+
+## Build
+```
+cd build
+ninja
+```
+
+## Flash using JLink
+```
+cd build
+cmake --build . --target nrfjprog_flash_softdevice
+cmake --build . --target nrfjprog_flash
+```
 
 ## Flash using GDB
-`make clean && make -j8 && arm-none-eabi-gdb -nx --batch -ex 'target extended-remote 192.168.1.192:2022' -ex 'monitor swdp_scan' -ex 'attach 1' -ex "load $SDK_ROOT/components/softdevice/s130/hex/s130_nrf51_2.0.1_softdevice.hex" -ex 'load _build/nrf51822_xxab.hex' -ex 'compare-sections' -ex 'kill'`
+```
+export GDB_REMOTE=/dev/ttyUSB0 # BlackMagic Probe
+export GDB_REMOTE=farpatch.local:2022 # Farpatch
+cd build
+cmake --build . --target gdb_flash_softdevice
+cmake --build . --target gdb_flash
+```
+
+## Debug using GDB
+```
+export GDB_REMOTE=/dev/ttyUSB0 # BlackMagic Probe
+export GDB_REMOTE=farpatch.local:2022 # Farpatch
+./run_gdb.sh
+```

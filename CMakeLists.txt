@@ -168,6 +168,9 @@ list(APPEND NRF_SDK_SOURCES
     ${SDK_ROOT}/components/libraries/util/app_util_platform.c
     ${SDK_ROOT}/components/libraries/hardfault/hardfault_implementation.c
     ${SDK_ROOT}/components/libraries/util/nrf_assert.c
+    ${SDK_ROOT}/components/drivers_nrf/ppi/nrf_drv_ppi.c
+    ${SDK_ROOT}/components/drivers_nrf/timer/nrf_drv_timer.c
+    ${SDK_ROOT}/components/libraries/pwm/app_pwm.c
     ${SDK_ROOT}/components/drivers_nrf/gpiote/nrf_drv_gpiote.c
     ${SDK_ROOT}/components/libraries/util/sdk_errors.c
     ${SDK_ROOT}/components/softdevice/common/softdevice_handler/softdevice_handler.c
@@ -212,12 +215,12 @@ add_custom_target(nrfjprog_flash
 )
 
 add_custom_target(gdb_flash
-    COMMAND arm-none-eabi-gdb -nx --batch -ex 'target extended-remote ${GDB_REMOTE}' -ex 'monitor swdp_scan' -ex 'attach 1' -ex 'load ${PROJECT_NAME}.hex' -ex 'compare-sections'
+    COMMAND arm-none-eabi-gdb -nx --batch -ex 'target extended-remote ${GDB_REMOTE}' -ex 'monitor version' -ex 'monitor swdp_scan' -ex 'attach 1' -ex 'load' -ex 'kill' ${PROJECT_NAME}.hex
     DEPENDS ${PROJECT_NAME}.hex
 )
 
 add_custom_target(gdb_flash_softdevice
-    COMMAND arm-none-eabi-gdb -nx --batch -ex 'target extended-remote ${GDB_REMOTE}' -ex 'monitor swdp_scan' -ex 'attach 1' -ex 'load ${SOFTDEVICE_PATH}' -ex 'compare-sections'
+    COMMAND arm-none-eabi-gdb -nx --batch -ex 'target extended-remote ${GDB_REMOTE}' -ex 'monitor version' -ex 'monitor swdp_scan' -ex 'attach 1' -ex 'load' -ex 'kill' ${SOFTDEVICE_PATH}
     DEPENDS ${PROJECT_NAME}.hex
 )
 
