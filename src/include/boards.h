@@ -109,7 +109,7 @@ uint32_t bsp_board_pin_to_button_idx(uint32_t pin_number);
  */
 uint32_t bsp_board_button_idx_to_pin(uint32_t button_idx);
 
-void bsp_board_buzzer_on(void);
+void bsp_board_buzzer_on(uint32_t freq);
 
 void bsp_board_buzzer_off(void);
 

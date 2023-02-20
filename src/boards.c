@@ -120,23 +120,17 @@ uint32_t bsp_board_pin_to_led_idx(uint32_t pin_number) {
 #endif  // LEDS_NUMBER > 0
 
 #ifdef BUZZER
-
-static void bsp_board_buzzer_duty(uint32_t dutycycle) {
+void bsp_board_buzzer_on(uint32_t freq) { 
+  app_pwm_config_t pwm_cfg = APP_PWM_DEFAULT_CONFIG_1CH(freq, BUZZER);
+  app_pwm_init(&PWM1, &pwm_cfg, NULL);
   app_pwm_enable(&PWM1);
-
   while (app_pwm_channel_duty_set(&PWM1, 0, 50) == NRF_ERROR_BUSY)
     ;
 }
 
-void bsp_board_buzzer_on(void) { bsp_board_buzzer_duty(0); }
-
 void bsp_board_buzzer_off(void) {
    app_pwm_disable(&PWM1);
    app_pwm_uninit(&PWM1);
-}
-void bsp_board_buzzer_init(void) {
-  app_pwm_config_t pwm_cfg = APP_PWM_DEFAULT_CONFIG_1CH(2863L, BUZZER);
-  app_pwm_init(&PWM1, &pwm_cfg, NULL);
 }
 #endif  // BUZZER defined
 

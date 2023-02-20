@@ -61,7 +61,8 @@ APP_TIMER_DEF(led_blink_timer);
 APP_TIMER_DEF(debounce_timer);
 uint8_t ignore_button = false;
 #endif
-#ifdef BUTTON_PIN
+#ifdef BUZZER
+APP_TIMER_DEF(buzz_timer);
 #endif
 
 static uint8_t
@@ -243,6 +244,32 @@ void debounce_timer_handler(void* context) {
 }
 #endif
 
+#ifdef BUZZER
+void buzz_timer_handler(void* context) {
+  bsp_board_buzzer_off();
+  NRF_LOG_DEBUG("buzzer stop timer\n");
+}
+
+void buzz(uint32_t period, uint32_t freq) {
+  NRF_LOG_DEBUG("beep\n");
+  bsp_board_buzzer_on(freq);
+  app_timer_start(buzz_timer, APP_TIMER_TICKS(period, APP_TIMER_PRESCALER), &freq);
+}
+
+void buzz_sync(uint32_t period, uint32_t freq) {
+  NRF_LOG_DEBUG("sync beep\n");
+  bsp_board_buzzer_on(freq);
+  nrf_delay_ms(period);
+  bsp_board_buzzer_off();
+}
+
+void welcome(void){
+  for(uint32_t i=8000; i>0; i=i-1000) 
+  buzz_sync(100,i);
+}
+
+#endif 
+
 void timers_init() {
   APP_TIMER_INIT(APP_TIMER_PRESCALER, APP_TIMER_OP_QUEUE_SIZE, false);
 
@@ -255,6 +282,11 @@ void timers_init() {
   app_timer_create(&debounce_timer, APP_TIMER_MODE_SINGLE_SHOT,
                    debounce_timer_handler);
 #endif
+
+#ifdef BUZZER
+  app_timer_create(&buzz_timer, APP_TIMER_MODE_SINGLE_SHOT,
+                   buzz_timer_handler);
+#endif 
 }
 
 void blink_leds(uint8_t blink_count) {
@@ -262,6 +294,7 @@ void blink_leds(uint8_t blink_count) {
   blink_count_ = blink_count * 2;
   app_timer_start(led_blink_timer, LED_BLINK_PERIOD, &blink_count_);
 }
+
 
 void timers_start() {
   app_timer_start(key_cycle_timer, KEY_CYCLE_PERIOD, NULL);
@@ -289,7 +322,10 @@ void button_handler(long unsigned int pin, nrf_gpiote_polarity_t polarity) {
   NRF_LOG_DEBUG("setting button counter to %d\n",
                 (button_counter & STATUS_FLAG_COUNTER_MASK));
   set_key_by_index(current_key_index);
-  blink_leds(25);
+  blink_leds(5);
+#ifdef BUZZER
+  buzz(200, 1000L);
+#endif
 #endif
 }
 
@@ -325,15 +361,12 @@ int main(void) {
   leds_init();
   buttons_init();
 
-  // buzzer
-  NRF_LOG_DEBUG("beep\n");
-  bsp_board_buzzer_init();
-  bsp_board_buzzer_on();
-  nrf_delay_ms(690);
-  bsp_board_buzzer_off();
-
   timers_init();
   timers_start();
+
+#ifdef BUZZER
+  welcome();
+#endif
 
   ble_stack_init();
   advertising_init();
