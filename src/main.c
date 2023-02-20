@@ -5,7 +5,6 @@
 #include "battery.h"
 #include "ble_advdata.h"
 #include "boards.h"
-#include "bsp.h"
 #include "keys.h"
 #include "nordic_common.h"
 #include "nrf_drv_gpiote.h"

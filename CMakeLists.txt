@@ -57,7 +57,6 @@ list(APPEND NRF_SDK_INCLUDES
     ${SDK_COMPONENTS}/drivers_nrf/hal
     ${SDK_ROOT}/components/toolchain/cmsis/include
     ${SDK_ROOT}/components/drivers_nrf/delay
-    ${SDK_ROOT}/components/boards
     ${SDK_ROOT}/components/libraries/util
     ${SDK_ROOT}/components/drivers_nrf/comp
     ${SDK_ROOT}/components/drivers_nrf/twi_master
@@ -76,7 +75,6 @@ list(APPEND NRF_SDK_INCLUDES
     ${SDK_ROOT}/components/drivers_nrf/i2s
     ${SDK_ROOT}/components/libraries/gpiote
     ${SDK_ROOT}/components/drivers_nrf/gpiote
-    ${SDK_ROOT}/components/boards
     ${SDK_ROOT}/components/drivers_nrf/common
     ${SDK_ROOT}/components/ble/ble_advertising
     ${SDK_ROOT}/components/drivers_nrf/adc
@@ -170,6 +168,7 @@ list(APPEND NRF_SDK_SOURCES
     ${SDK_ROOT}/components/libraries/util/app_util_platform.c
     ${SDK_ROOT}/components/libraries/hardfault/hardfault_implementation.c
     ${SDK_ROOT}/components/libraries/util/nrf_assert.c
+    ${SDK_ROOT}/components/drivers_nrf/gpiote/nrf_drv_gpiote.c
     ${SDK_ROOT}/components/libraries/util/sdk_errors.c
     ${SDK_ROOT}/components/softdevice/common/softdevice_handler/softdevice_handler.c
     ${SDK_ROOT}/components/ble/common/ble_advdata.c
