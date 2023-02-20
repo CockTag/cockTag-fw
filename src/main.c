@@ -11,6 +11,8 @@
 #include "nrf_log.h"
 #include "nrf_log_ctrl.h"
 #include "softdevice_handler.h"
+#include "nrf_delay.h"
+
 
 #define CENTRAL_LINK_COUNT \
   0 /**< Number of central links used by the application. When changing this number remember to adjust the RAM settings*/
@@ -322,6 +324,13 @@ int main(void) {
 
   leds_init();
   buttons_init();
+
+  // buzzer
+  NRF_LOG_DEBUG("beep\n");
+  bsp_board_buzzer_init();
+  bsp_board_buzzer_on();
+  nrf_delay_ms(690);
+  bsp_board_buzzer_off();
 
   timers_init();
   timers_start();

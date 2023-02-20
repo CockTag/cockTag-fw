@@ -130,12 +130,12 @@ static void bsp_board_buzzer_duty(uint32_t dutycycle) {
 
 void bsp_board_buzzer_on(void) { bsp_board_buzzer_duty(0); }
 
-void bsp_board_buzzer_off(void) { app_pwm_disable(&PWM1); }
+void bsp_board_buzzer_off(void) {
+   app_pwm_disable(&PWM1);
+   app_pwm_uninit(&PWM1);
+}
 void bsp_board_buzzer_init(void) {
-  nrf_gpio_pin_write(BUZZER, 0);
-  nrf_gpio_cfg_output(BUZZER);
   app_pwm_config_t pwm_cfg = APP_PWM_DEFAULT_CONFIG_1CH(2863L, BUZZER);
-
   app_pwm_init(&PWM1, &pwm_cfg, NULL);
 }
 #endif  // BUZZER defined
