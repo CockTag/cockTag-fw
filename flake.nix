@@ -37,6 +37,7 @@
               ] ++ darwinPackages;
             shellHook = ''
               export SDK_ROOT=${nrf5-sdk.outPath}/share/nRF5_SDK
+              export ARMGCC_ROOT=${pkgs.gcc-arm-embedded-6}/bin
             '';
           };
         };
