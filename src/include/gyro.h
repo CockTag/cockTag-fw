@@ -12,6 +12,7 @@
 
 // Read only registers
 #define GYRO_WHO_AM_I 0x0F // Should return 0x35
+#define GYRO_INT_REL 0x1A // Interrupt release? 
 
 // Read/Write registers
 #define GYRO_CTRL_REG1 0x1B
@@ -25,17 +26,13 @@
 #define GYRO_WAKEUP_THRD_L 0x6B
 
 // Write only registers
-#define GYRO_RESET 0x3A //
+#define GYRO_RESET 0x3A 
 
 // Gyro configuration
-#define WAKEUP_THRESHOLD ((uint16_t) 123)
 #define INT_PULL NRF_GPIO_PIN_PULLDOWN
 
 /* TWI instance ID. */
 #define TWI_INSTANCE_ID     0
-
-/* Number of possible TWI addresses. */
-#define TWI_ADDRESSES      127
 
 /* TWI instance. */
 static const nrf_drv_twi_t m_twi = NRF_DRV_TWI_INSTANCE(TWI_INSTANCE_ID);
