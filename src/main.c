@@ -369,7 +369,7 @@ int main(void) {
   timers_start();
 
 #ifdef BUZZER
-  welcome();
+  //welcome();
 #endif
 
 #ifdef GYRO
