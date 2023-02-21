@@ -1,4 +1,5 @@
 #include "gyro.h"
+#include <stdint.h>
 
 volatile static bool twi_tx_done = false;
 volatile static bool twi_rx_done = false;
@@ -10,7 +11,6 @@ static void nrf_drv_mpu_twi_event_handler(nrf_drv_twi_evt_t const * p_event, voi
     {
         case NRF_DRV_TWI_EVT_DONE:
         {
-            NRF_LOG_DEBUG("GYRO: GOT EV\n");
             switch(p_event->xfer_desc.type)
             {
                 case NRF_DRV_TWI_XFER_TX:
@@ -68,13 +68,11 @@ void twi_init (void)
 
 uint8_t gyro_read_register(uint8_t reg)
 {
-      NRF_LOG_DEBUG("GYRO: READ START %X\n", reg);
-
     ret_code_t err_code;
     uint8_t data;
     err_code = nrf_drv_twi_tx(&m_twi, GYRO_ADDRESS, &reg, 1, true);
     APP_ERROR_CHECK(err_code);
-    timeout = 500;
+    timeout = 100;
     while((!twi_tx_done) && timeout)
     {
         nrf_delay_ms(1);
@@ -82,19 +80,19 @@ uint8_t gyro_read_register(uint8_t reg)
     }
     if(!twi_tx_done)
     {
-        NRF_LOG_DEBUG("GYRO: READ ACK TIMEOUT\n");
+        NRF_LOG_DEBUG("GYRO: READ TIMEOUT\n");
     }
     twi_tx_done = false;
 
     err_code = nrf_drv_twi_rx(&m_twi, GYRO_ADDRESS, &data, 1);
     APP_ERROR_CHECK(err_code);
-    timeout = 500;
-    while((!twi_tx_done) && timeout)
+    timeout = 100;
+    while((!twi_rx_done) && timeout)
     {
         nrf_delay_ms(1);
         timeout--;
     }
-    if(!twi_tx_done)
+    if(!twi_rx_done)
     {
         NRF_LOG_DEBUG("GYRO: READ ACK TIMEOUT\n");
     }
@@ -104,7 +102,6 @@ uint8_t gyro_read_register(uint8_t reg)
 
 void gyro_write_register(uint8_t reg, uint8_t data)
 {
-    NRF_LOG_DEBUG("GYRO: WRITE START %X\n", reg);
     ret_code_t err_code;
     uint8_t tx_data[2];
     tx_data[0] = reg;
@@ -113,7 +110,7 @@ void gyro_write_register(uint8_t reg, uint8_t data)
     APP_ERROR_CHECK(err_code);
 
     //Wait until twi_tx_done is true with 100ms timeout
-    timeout = 500;
+    timeout = 100;
     while((!twi_tx_done) && timeout)
     {
         nrf_delay_ms(1);
@@ -145,11 +142,11 @@ void set_standby(bool standby) {
 }
 
 void interrupt_handler(long unsigned int pin, nrf_gpiote_polarity_t polarity){
-    NRF_LOG_DEBUG("GYRO: interrupt\n");
+    uint8_t reg = gyro_read_register(GYRO_INT_REL);
+    NRF_LOG_DEBUG("GYRO: interrupt release %X\n", reg);
 }
 
 void interrupt_init() {
-  NRF_LOG_DEBUG("GYRO: setting interrupt\n");
   ret_code_t err_code;
   nrf_drv_gpiote_in_config_t in_config = {
       .sense = INT_PULL == NRF_GPIO_PIN_PULLUP ? NRF_GPIOTE_POLARITY_HITOLO
@@ -169,32 +166,30 @@ void gyro_init(void)
     if(gyro_read_register(GYRO_WHO_AM_I) == 0x35)
     {
         NRF_LOG_DEBUG("GYRO found\n");
-        // gyro_write_register(GYRO_NA_COUNTER, 0x08); // 0.781Hz
-        gyro_write_register(GYRO_CTRL_REG, 0x08); // 0.781Hz
-        gyro_write_register(GYRO_CTRL_REG1, 0x80 | (0x00 << 2)); // Papieskie
-
-        set_standby(true);
-        NRF_LOG_DEBUG("GYRO set pooling p\n");
-        gyro_write_register(GYRO_INT_CTRL_REG1, 0x22); // Interrupt enabled, active LOW, non-latched
-        uint8_t reg = gyro_read_register(GYRO_CTRL_REG1);
-        NRF_LOG_DEBUG("GYRO set int\n");
-        gyro_write_register(GYRO_CTRL_REG1, reg | (0x01 << 1)); // Wake-Up (motion detect)
-        NRF_LOG_DEBUG("GYRO set motion detect\n");
-        gyro_write_register(GYRO_CTRL_REG2, 0xBF); // enable interrupt on all axis any direction - Unlatched
-        NRF_LOG_DEBUG("GYRO int on all axis\n");
-        gyro_write_register(GYRO_WAKEUP_THRD_H, (uint8_t) (WAKEUP_THRESHOLD >> 4)); 
-        gyro_write_register(GYRO_WAKEUP_THRD_L, (uint8_t) (WAKEUP_THRESHOLD << 4));
-        NRF_LOG_DEBUG("GYRO set int wakeup threshold\n");
-
-        gyro_write_register(GYRO_WAKEUP_COUNTER, (uint8_t) 1); 
-        gyro_write_register(GYRO_NA_COUNTER, (uint8_t) 10);
-        NRF_LOG_DEBUG("GYRO set counters\n");
-
-        set_standby(false);
-        NRF_LOG_DEBUG("GYRO disable gyro standby\n");
-
         interrupt_init();
-        NRF_LOG_DEBUG("GYRO set nrf interrupt\n");
+        NRF_LOG_DEBUG("GYRO: interupt initialised\n");
+        gyro_write_register(GYRO_CTRL_REG1, 0x00); // Set to standby, reset the register
+        gyro_write_register(GYRO_CTRL_REG1, 0x12); // Standby, low-current, no int data, +-8g range, WUFE enabled
+        // No need to set anything in CTRL_REG2 since the default 0x0 value is fine? Also, it has some reserved bits
+        gyro_write_register(GYRO_INT_CTRL_REG1, 0x32); // Interrupt enabled, active HIGH, latched
+        gyro_write_register(GYRO_INT_CTRL_REG1, 0x3F); // Latched, any direction interrupt
+        gyro_write_register(GYRO_DATA_CTRL_REG, 0x08); // 0.781Hz, lowest possible ODR
+        /*
+        Minimal time beetwen interrupts
+        Formula: WAKEUP_COUNTER = Desired seconds / ODR (0.781Hz)
+        1s = 1.28; Minimal value is 1
+        */
+        gyro_write_register(GYRO_WAKEUP_COUNTER, (uint8_t) 1); 
+        /* 
+        Wakeup threshold, 12 bits stored in two separate registers
+        Formula: WAKEUP_THRESHOLD (counts) = Desired Threshold (g) x 256 (counts/g)
+        0x8, 0x0 is 0.5g acc
+        Last lower 4 bits should be always 0
+        */
+        gyro_write_register(GYRO_WAKEUP_THRD_H, 0x8); 
+        gyro_write_register(GYRO_WAKEUP_THRD_L, 0x0);
+        gyro_write_register(GYRO_CTRL_REG1, 0x92); // Active, low-current, no int data, +-8g range, WUFE enabled
+        NRF_LOG_DEBUG("GYRO: registers set\n");
     }
     else
     {
