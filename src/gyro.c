@@ -39,7 +39,6 @@ static void nrf_drv_mpu_twi_event_handler(nrf_drv_twi_evt_t const * p_event, voi
     }
 }
 
-
 /**
  * @brief TWI initialization.
  */

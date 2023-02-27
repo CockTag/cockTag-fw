@@ -69,6 +69,7 @@ uint8_t ignore_button = false;
 APP_TIMER_DEF(buzz_timer);
 #endif
 
+
 static uint8_t
     offline_finding_adv_template[] =
         {
