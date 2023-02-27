@@ -186,7 +186,7 @@ void gyro_init(void)
         0x8, 0x0 is 0.5g acc
         Last lower 4 bits should be always 0
         */
-        gyro_write_register(GYRO_WAKEUP_THRD_H, 0x8); 
+        gyro_write_register(GYRO_WAKEUP_THRD_H, 0x2); 
         gyro_write_register(GYRO_WAKEUP_THRD_L, 0x0);
         gyro_write_register(GYRO_CTRL_REG1, 0x92); // Active, low-current, no int data, +-8g range, WUFE enabled
         NRF_LOG_DEBUG("GYRO: registers set\n");
